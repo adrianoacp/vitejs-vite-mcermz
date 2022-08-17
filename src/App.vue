@@ -1,28 +1,64 @@
-<script setup>
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-import HelloWorld from './components/HelloWorld.vue';
+<script setup lang="ts">
 import Select from './components/Select.vue';
+import { defineComponent, onMounted, ref } from 'vue';
+import { generateFakeData, Item } from './models/item.model';
+import { useMainStore } from './store/index';
+
+ 
+    const items = ref<Item[]>([]);
+    const mainStore = useMainStore();
+
+    onMounted(() => {
+      items.value = mainStore.items;
+    });
+    function createItem() {
+      mainStore.createNewItem(generateFakeData());
+    }
+    function deleteItem(id: string) {
+      mainStore.deleteItem(id);
+    }
+    function updateItem(id: string) {
+      mainStore.updateItem(id, generateFakeData());
+    }
 
 
 </script>
 
+
 <template>
-  <div style="width: 100%">
+  <div>
+    <div style="width: 100%">
+      <a href="https://vuejs.org/" target="_blank">
+        <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />VB-MAPP
+      </a>
+    </div>
 
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />VB-MAPP
-    </a>
+    <Select />
 
+    <button @click="createItem">New Item</button>
+    <div>
+      <div
+        v-for="(item, index) in items"
+        :key="index"
+        style="
+          background-color: #f5f5f5;
+          padding: 10px;
+          margin-bottom: 10px;
+          margin-top: 10px;
+        "
+      >
+        <code>{{ item }}</code>
+        <button @click="deleteItem(item.id)">Delete</button>
+        <button @click="updateItem(item.id)">Update</button>
+      </div>
+    </div>
   </div>
-
-  <Select />
 </template>
 
 <style scoped>
 .logo {
   height: 6em;
-  
+
   will-change: filter;
 }
 .logo:hover {
